@@ -24,28 +24,19 @@ parts:
       - -cevelop-linux.gtk.x86_64.tar.gz
 
   cevelop:
-    after:
-      - scrape-download
+    after: [scrape-download]
     plugin: dump
     source: $SNAPCRAFT_STAGE/cevelop-linux.gtk.x86_64.tar.gz
-    override-build: |
-      snapcraftctl build
-      rm $SNAPCRAFT_PART_INSTALL/cevelop.desktop
 
   java:
     plugin: nil
     stage-packages:
       - openjdk-11-jre
-    override-build: |
-      snapcraftctl build
-      rm $SNAPCRAFT_PART_INSTALL/usr/lib/jvm/java-11-openjdk-*/lib/security/cacerts
-
-  desktop:
-    plugin: dump
-    source: glue
+    prime:
+      - -usr/lib/jvm/java-11-openjdk-amd64/lib/security/cacerts
 
 environment:
-  PATH: $PATH:/snap/cevelop/current/usr/lib/jvm/java-11-openjdk-$SNAP_ARCH/bin/:$SNAP
+  PATH: $PATH:/snap/cevelop/current/usr/lib/jvm/java-11-openjdk-$SNAP_ARCH/bin/
 
 apps:
   cevelop:
