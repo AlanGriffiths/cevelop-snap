@@ -16,6 +16,7 @@ parts:
   scrape-download:
     plugin: nil
     override-pull: |
+      sudo apt install --assume-yes curl
       CEVELOP_VERSION=$(curl -s https://www.cevelop.com/download/ | sed -n 's!^.*href="/cevelop/downloads/cevelop-\([0-9.-]*\)-linux.gtk.x86_64.tar.gz.*!\1!p' -)
       snapcraftctl set-version $CEVELOP_VERSION
       curl -s -o $SNAPCRAFT_PART_INSTALL/cevelop-linux.gtk.x86_64.tar.gz https://www.cevelop.com/cevelop/downloads/cevelop-$CEVELOP_VERSION-linux.gtk.x86_64.tar.gz
