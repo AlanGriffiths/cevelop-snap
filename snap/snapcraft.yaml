@@ -1,6 +1,6 @@
 name: cevelop
 base: core18
-adopt-info: cevelop
+adopt-info: scrape-download
 summary: The C++ IDE for professional developers
 description: |
   Major parts of Cevelop are Open Source as Eclipse CDT to which we actively
@@ -9,31 +9,34 @@ description: |
 grade: stable
 confinement: classic
 
+architectures:
+  - build-on: amd64
+
 parts:
+  scrape-download:
+    plugin: nil
+    override-pull: |
+      CEVELOP_VERSION=$(curl -s https://www.cevelop.com/download/ | sed -n 's!^.*href="/cevelop/downloads/cevelop-\([0-9.-]*\)-linux.gtk.x86_64.tar.gz.*!\1!p' -)
+      snapcraftctl set-version $CEVELOP_VERSION
+      curl -s -o $SNAPCRAFT_PART_INSTALL/cevelop-linux.gtk.x86_64.tar.gz https://www.cevelop.com/cevelop/downloads/cevelop-$CEVELOP_VERSION-linux.gtk.x86_64.tar.gz
+      snapcraftctl pull
+    prime:
+      - -cevelop-linux.gtk.x86_64.tar.gz
+
   cevelop:
+    after: [scrape-download]
     plugin: dump
-    # Source ought to be some "current" download, maybe we can add a sig check?
-    source: https://www.cevelop.com/cevelop/downloads/cevelop-1.11.1-201902151304-linux.gtk.x86_64.tar.gz
-    override-build: |
-      snapcraftctl build
-      # I'm guessing where to extract the best version.
-      snapcraftctl set-version $(ls $SNAPCRAFT_PART_INSTALL/plugins/com.cevelop.ide.branding*.jar | sed -rne 's/^[^0-9]*([0-9]*\.[0-9]*\.[0-9]*\.[0-9]*).+$/\1/p')
-      rm $SNAPCRAFT_PART_INSTALL/cevelop.desktop
+    source: $SNAPCRAFT_STAGE/cevelop-linux.gtk.x86_64.tar.gz
 
   java:
     plugin: nil
     stage-packages:
       - openjdk-11-jre
-    override-build: |
-      snapcraftctl build
-      rm $SNAPCRAFT_PART_INSTALL/usr/lib/jvm/java-11-openjdk-*/lib/security/cacerts
-
-  desktop:
-    plugin: dump
-    source: glue
+    prime:
+      - -usr/lib/jvm/java-11-openjdk-amd64/lib/security/cacerts
 
 environment:
-  PATH: $PATH:/snap/cevelop/current/usr/lib/jvm/java-11-openjdk-$SNAP_ARCH/bin/:$SNAP
+  PATH: $PATH:/snap/cevelop/current/usr/lib/jvm/java-11-openjdk-$SNAP_ARCH/bin/
 
 apps:
   cevelop:

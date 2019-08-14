@@ -1,8 +1,0 @@
-#!/usr/bin/env xdg-open
-[Desktop Entry]
-Type=Application
-Terminal=false
-Icon=icon.xpm
-Name=Cevelop C++ IDE
-Exec=cevelop
-StartupWMClass=Cevelop C++ IDE
