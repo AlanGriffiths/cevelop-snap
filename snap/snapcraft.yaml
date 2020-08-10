@@ -25,9 +25,58 @@ parts:
       - -cevelop-linux.gtk.x86_64.tar.gz
 
   cevelop:
-    after: [scrape-download]
+    after: [scrape-download, dependencies]
     plugin: dump
     source: $SNAPCRAFT_STAGE/cevelop-linux.gtk.x86_64.tar.gz
+
+  # This might be overkill, it comes from scraping a --strace of a failing run on 20.04
+  # and adding a package for every file that was opened from the host filesystem.
+  dependencies:
+    plugin: nil
+    stage-packages:
+      - libatk1.0-0
+      - libatk-bridge2.0-0
+      - libatspi2.0-0
+      - libcairo2
+      - libcairo-gobject2
+      - libdatrie1
+      - libepoxy0
+      - libffi6
+      - libfontconfig1
+      - libfreetype6
+      - libfribidi0
+      - libgdk-pixbuf2.0-0
+      - libglib2.0-0
+      - libgraphite2-3
+      - libgtk-3-0
+      - libharfbuzz0b
+      - liblz4-1
+      - libpango-1.0-0
+      - libpangocairo-1.0-0
+      - libpangoft2-1.0-0
+      - libpcre2-8-0
+      - libpixman-1-0
+      - libpng16-16
+      - libthai0
+      - libwayland-client0
+      - libwayland-cursor0
+      - libwayland-egl1
+      - libx11-6
+      - libxau6
+      - libxcb1
+      - libxcb-render0
+      - libxcb-shm0
+      - libxcomposite1
+      - libxcursor1
+      - libxdamage1
+      - libxdmcp6
+      - libxext6
+      - libxfixes3
+      - libxi6
+      - libxinerama1
+      - libxkbcommon0
+      - libxrandr2
+      - libxrender1
 
   java:
     plugin: nil
@@ -38,6 +87,9 @@ parts:
 
 environment:
   PATH: $PATH:/snap/cevelop/current/usr/lib/jvm/java-11-openjdk-$SNAP_ARCH/bin/
+  JAVA_HOME: /snap/cevelop/current/usr/lib/jvm/java-11-openjdk-$SNAP_ARCH/
+  # Unfortunately, adding LD_LIBRARY_PATH, might break launching code under development
+  LD_LIBRARY_PATH: /snap/cevelop/current/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/
 
 apps:
   cevelop:
